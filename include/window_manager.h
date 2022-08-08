@@ -19,18 +19,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include <X11/Xlib.h>
+#include <memory>
 
-#include <cstdio>
-#include <cstdlib>
-#include <sysexits.h>
+class WindowManager {
+    public:
+        static std::unique_ptr<WindowManager> create();
+        
+        int run();
 
-#include "window_manager.h"
+        ~WindowManager();
+    private:
+        WindowManager(Display* display);
+        
+        Display* m_display;
 
-int main(int argc, char** argv) {
-    std::unique_ptr<WindowManager> winManager(WindowManager::create());
-    if (!winManager) {
-        std::fprintf(stderr, "Failed to open a connection to the X server.\n");
-        exit(EXIT_FAILURE);
-    }
-    return 0;
-}
+        const Window m_rootWindow;
+};

@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 
+# set(CMAKE_TOOLCHAIN_FILE "/media/thetimbrick/4d2d47b0-3ef2-4c5a-8721-f1970dd6ff77/host/share/buildroot/toolchainfile.cmake")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(EmbreadedWM VERSION 0.1
 DESCRIPTION "This is the source of the EmbreadedOS display Manager for the EmbreadedWatch."
 HOMEPAGE_URL "https://github.com/proatgram/EmbreadedWM"

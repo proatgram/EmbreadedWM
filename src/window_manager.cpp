@@ -20,17 +20,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <cstdio>
-#include <cstdlib>
-#include <sysexits.h>
-
 #include "window_manager.h"
 
-int main(int argc, char** argv) {
-    std::unique_ptr<WindowManager> winManager(WindowManager::create());
-    if (!winManager) {
-        std::fprintf(stderr, "Failed to open a connection to the X server.\n");
-        exit(EXIT_FAILURE);
+#include <sysexits.h>
+#include <cstdlib>
+#include <cstdio>
+
+std::unique_ptr<WindowManager> WindowManager::create() {
+    Display* display = XOpenDisplay(nullptr);
+    if (display == nullptr) {
+        std::fprintf(stderr, "Failed to open display %s\n", XDisplayName(nullptr));
+        return nullptr;
     }
-    return 0;
+
+    return std::unique_ptr<WindowManager>(new WindowManager(display));
+}
+
+WindowManager::WindowManager(Display* display) :
+    m_display(display),
+    m_rootWindow(DefaultRootWindow(m_display))
+
+{
+
+}
+
+WindowManager::~WindowManager(){
+    XCloseDisplay(m_display);
+    std::fprintf(stdout, "Connection to the X server was terminated.\n");
+}
+
+int WindowManager::run() {
+
 }
