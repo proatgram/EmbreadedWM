@@ -19,6 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #include <X11/Xlib.h>
 #include <memory>
 
@@ -35,4 +36,10 @@ class WindowManager {
         Display* m_display;
 
         const Window m_rootWindow;
+        
+        static int XError(Display* display, XErrorEvent* errorEvent);
+
+        static int XDetectWM(Display* display, XErrorEvent* errorEvent);
+
+        static bool m_wmDetected;
 };

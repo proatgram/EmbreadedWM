@@ -20,18 +20,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <cstdio>
 #include <cstdlib>
-#include <sysexits.h>
+#include <cstdio>
 
-#include "window_manager.h"
+#include <X11/Xlib.h>
 
-int main(int argc, char** argv) {
-    std::unique_ptr<WindowManager> winManager(WindowManager::create());
-    if (!winManager) {
-        std::fprintf(stderr, "Failed to open a connection to the X server.\n");
-        exit(EXIT_FAILURE);
-    }
-    
-    return 0;
-}
+class Events {
+    public:
+        static void DoCreateEvent(const XCreateWindowEvent& event) {
+            
+        }
+
+        static void DoDestroyEvent(const XDestroyWindowEvent& event) {
+
+        }
+
+        static void DoReparentEvent(const XReparentEvent& event) {
+
+        }
+};

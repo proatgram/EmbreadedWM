@@ -20,11 +20,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "window_manager.h"
-
 #include <sysexits.h>
 #include <cstdlib>
 #include <cstdio>
+
+#include "window_manager.h"
+#include "events.h"
+
+bool WindowManager::m_wmDetected = false;
 
 std::unique_ptr<WindowManager> WindowManager::create() {
     Display* display = XOpenDisplay(nullptr);
@@ -50,5 +53,48 @@ WindowManager::~WindowManager(){
 }
 
 int WindowManager::run() {
+    m_wmDetected = false;
+    XSetErrorHandler(&WindowManager::XDetectWM);
+    XSelectInput(m_display, m_rootWindow, SubstructureRedirectMask | SubstructureNotifyMask);
 
+    XSync(m_display, false);
+
+    if (m_wmDetected) {
+        std::fprintf(stderr, "Detected another active Window Manager on this display.");
+        return 1;
+    }
+    XSetErrorHandler(&WindowManager::XError);
+
+    while (true) {
+        XEvent event;
+        XNextEvent(m_display, &event);
+
+        switch (event.type) {
+            case CreateNotify:
+                Events::DoCreateEvent(event.xcreatewindow);
+                break;
+            case DestroyNotify:
+                Events::DoDestroyEvent(event.xdestroywindow);
+                break;
+            case ReparentNotify:
+                Events::DoReparentEvent(event.xreparent);
+                break;
+            default:
+
+                break;
+        }
+    }
+}
+
+int WindowManager::XDetectWM(Display* display, XErrorEvent* errorEvent) {
+    if (static_cast<int>(errorEvent->error_code) == BadAccess) {
+        m_wmDetected = true;
+    }
+
+    return 0;
+}
+
+int WindowManager::XError(Display* display, XErrorEvent* errorEvent) {
+    std::fprintf(stderr, "XError: %d Type: %d", errorEvent->error_code, errorEvent->type);
+    return errorEvent->error_code;
 }

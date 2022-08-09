@@ -33,3 +33,6 @@
 
 # Directories
 build/*
+
+# Other
+compile_commands.json
