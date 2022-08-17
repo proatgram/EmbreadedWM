@@ -32,6 +32,6 @@ int main(int argc, char** argv) {
         std::fprintf(stderr, "Failed to open a connection to the X server.\n");
         exit(EXIT_FAILURE);
     }
-    
+    winManager->run();
     return 0;
 }

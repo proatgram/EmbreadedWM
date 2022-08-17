@@ -41,7 +41,8 @@ std::unique_ptr<WindowManager> WindowManager::create() {
 
 WindowManager::WindowManager(Display* display) :
     m_display(display),
-    m_rootWindow(DefaultRootWindow(m_display))
+    m_rootWindow(DefaultRootWindow(m_display)),
+    m_managedWindows()
 
 {
 
@@ -64,20 +65,43 @@ int WindowManager::run() {
         return 1;
     }
     XSetErrorHandler(&WindowManager::XError);
+    XGrabServer(m_display);
 
-    while (true) {
+    Window retRoot, retParent;
+    Window* topWindows;
+    unsigned int numberTopWin;
+
+    XQueryTree(m_display, m_rootWindow, &retRoot, &retParent, &topWindows, &numberTopWin);
+
+    for (unsigned int i = 0; i < numberTopWin; ++i) {
+        XAddToSaveSet(m_display, topWindows[i]);
+        XMapWindow(m_display, topWindows[i]);
+        m_managedWindows.insert(topWindows[i]);
+    }
+    XFree(topWindows);
+    XUngrabServer(m_display);
+    for (;;) {
         XEvent event;
         XNextEvent(m_display, &event);
 
         switch (event.type) {
             case CreateNotify:
-                Events::DoCreateEvent(event.xcreatewindow);
+                Events::DoCreateEvent(event.xcreatewindow, m_display);
                 break;
             case DestroyNotify:
-                Events::DoDestroyEvent(event.xdestroywindow);
+                Events::DoDestroyEvent(event.xdestroywindow, m_display);
                 break;
             case ReparentNotify:
-                Events::DoReparentEvent(event.xreparent);
+                Events::DoReparentEvent(event.xreparent, m_display);
+                break;
+            case ConfigureRequest:
+                Events::DoConfigureRequestEvent(event.xconfigurerequest, m_display);
+                break;
+            case MapRequest:
+                Events::DoMapRequestEvent(event.xmaprequest, m_display, m_managedWindows);
+                break;
+            case UnmapNotify:
+                Events::DoUnmapNotify(event.xunmap, m_display, m_managedWindows);
                 break;
             default:
 

@@ -22,20 +22,50 @@ SOFTWARE.
 
 #include <cstdlib>
 #include <cstdio>
+#include <unordered_set>
 
 #include <X11/Xlib.h>
 
 class Events {
     public:
-        static void DoCreateEvent(const XCreateWindowEvent& event) {
-            
+        static void DoCreateEvent(const XCreateWindowEvent& event, Display* display) {
+            std::fprintf(stdout, "Got window create event for Window %ld\n", event.window);
         }
 
-        static void DoDestroyEvent(const XDestroyWindowEvent& event) {
+        static void DoDestroyEvent(const XDestroyWindowEvent& event, Display* display) {
 
         }
 
-        static void DoReparentEvent(const XReparentEvent& event) {
+        static void DoReparentEvent(const XReparentEvent& event, Display* display) {
 
+        }
+        
+        static void DoConfigureRequestEvent(const XConfigureRequestEvent& event, Display* display) {
+            XWindowChanges change;
+
+            change.x = event.x;
+            change.y = event.y;
+            change.width = event.width;
+            change.height = event.height;
+            change.border_width = event.border_width;
+            change.sibling = event.above;
+            change.stack_mode = event.detail;
+
+            XConfigureWindow(display, event.window, event.value_mask, &change);
+        }
+        static void DoMapRequestEvent(const XMapRequestEvent& event, Display* display, std::unordered_set<Window>& managedWindows) {
+            XMapWindow(display, event.window);
+            managedWindows.insert(event.window);
+            XAddToSaveSet(display, event.window);
+        }
+        static void DoUnmapNotify(const XUnmapEvent& event, Display* display, std::unordered_set<Window>& managedWindows) {
+            if (!managedWindows.count(event.window)) {
+                std::fprintf(stdout, "Not unmaping unmap request for window %ld. Reason: Non-managed window.\n", event.window);
+                return;
+            }
+            XUnmapWindow(display, event.window);
+            XDestroyWindow(display, event.window);
+            managedWindows.erase(event.window);
+            XRemoveFromSaveSet(display, event.window);
         }
 };

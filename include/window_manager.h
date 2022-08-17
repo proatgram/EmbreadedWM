@@ -21,7 +21,12 @@ SOFTWARE.
 */
 
 #include <X11/Xlib.h>
+#include <X11/extensions/XInput2.h>
+#include <X11/extensions/XI2.h>
+#include <X11/extensions/Xge.h>
+#include <X11/extensions/Xfixes.h>
 #include <memory>
+#include <unordered_set>
 
 class WindowManager {
     public:
@@ -42,4 +47,6 @@ class WindowManager {
         static int XDetectWM(Display* display, XErrorEvent* errorEvent);
 
         static bool m_wmDetected;
+
+        std::unordered_set<Window> m_managedWindows;
 };
