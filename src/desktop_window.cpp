@@ -40,8 +40,13 @@ int Desktop::populateApps() {
 int Desktop::scanApps() {
     std::string exec;
     for (auto const& it : std::filesystem::recursive_directory_iterator(std::filesystem::path("/usr/share/applications"))) {
-        DeskEntry::getEntries(it.path()).at("Exec");
-        /* std::printf("%s\n", exec.c_str()); */
+        try {
+            exec = DeskEntry::getEntries(it.path()).at("Exec");
+        }
+        catch (std::out_of_range) {
+            exec = "";
+        }
+        std::printf("%s\n", exec.c_str());
     }
     return 0;
 }

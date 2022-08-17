@@ -114,8 +114,8 @@ int WindowManager::XDetectWM(Display* display, XErrorEvent* errorEvent) {
     if (static_cast<int>(errorEvent->error_code) == BadAccess) {
         m_wmDetected = true;
     }
-
     return 0;
+
 }
 
 int WindowManager::XError(Display* display, XErrorEvent* errorEvent) {
