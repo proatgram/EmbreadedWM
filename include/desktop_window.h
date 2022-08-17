@@ -22,20 +22,32 @@ SOFTWARE.
 
 #include <cstdio>
 #include <cstdlib>
-#include <sysexits.h>
+#include <string>
+#include <vector>
+#include <gtkmm/window.h>
+#include <gtkmm/box.h>
+#include <gtkmm/overlay.h>
+#include <gdkmm/pixbuf.h>
+#include <gtkmm/container.h>
+#include <gtkmm/grid.h>
+#include <gtkmm/button.h>
+#include <gtkmm/viewport.h>
+#include <deskentry/deskentry.h>
 
-#include "desktop_window.h"
-#include "window_manager.h"
+class Desktop : public Gtk::Window {
+    public:
+        Desktop();
 
-int main(int argc, char** argv) {
-    Glib::RefPtr<Gtk::Application> app(Gtk::Application::create("org.Embreaded.Desktop"));
-    Desktop desk;
-    app->run(desk);
-    std::unique_ptr<WindowManager> winManager(WindowManager::create());
-    if (!winManager) {
-        std::fprintf(stderr, "Failed to open a connection to the X server.\n");
-        exit(EXIT_FAILURE);
-    }
-    winManager->run();
-    return 0;
-}
+    private:
+
+        int populateApps();
+
+        int scanApps();
+    protected:
+        
+        int m_standardExecute(std::string executeCommand);
+
+        Gtk::Viewport m_appPages;
+
+        std::vector<Gtk::Overlay> m_backgroundPages;
+};

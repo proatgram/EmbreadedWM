@@ -20,22 +20,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <cstdio>
-#include <cstdlib>
-#include <sysexits.h>
-
 #include "desktop_window.h"
-#include "window_manager.h"
 
-int main(int argc, char** argv) {
-    Glib::RefPtr<Gtk::Application> app(Gtk::Application::create("org.Embreaded.Desktop"));
-    Desktop desk;
-    app->run(desk);
-    std::unique_ptr<WindowManager> winManager(WindowManager::create());
-    if (!winManager) {
-        std::fprintf(stderr, "Failed to open a connection to the X server.\n");
-        exit(EXIT_FAILURE);
+Desktop::Desktop() :
+    m_appPages(Gtk::Adjustment::create(0, 0, 0, 0, 0, 0), Gtk::Adjustment::create(2, 1, 5)),
+    m_backgroundPages()
+
+{
+    set_title("EmbreadedTop");
+    set_default_size(240, 240);
+    scanApps();
+}
+
+int Desktop::populateApps() {
+
+    return 0;
+}
+
+int Desktop::scanApps() {
+    std::string exec;
+    for (auto const& it : std::filesystem::recursive_directory_iterator(std::filesystem::path("/usr/share/applications"))) {
+        DeskEntry::getEntries(it.path()).at("Exec");
+        /* std::printf("%s\n", exec.c_str()); */
     }
-    winManager->run();
     return 0;
 }

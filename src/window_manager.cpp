@@ -61,7 +61,7 @@ int WindowManager::run() {
     XSync(m_display, false);
 
     if (m_wmDetected) {
-        std::fprintf(stderr, "Detected another active Window Manager on this display.");
+        std::fprintf(stderr, "Detected another active Window Manager on this display.\n");
         return 1;
     }
     XSetErrorHandler(&WindowManager::XError);
