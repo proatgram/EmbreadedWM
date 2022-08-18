@@ -23,17 +23,57 @@ SOFTWARE.
 #include "desktop_window.h"
 
 Desktop::Desktop() :
-    m_appPages(Gtk::Adjustment::create(0, 0, 0, 0, 0, 0), Gtk::Adjustment::create(2, 1, 5)),
-    m_backgroundPages()
+    m_appGrid(),
+    m_scrollable(),
+    m_overlay(),
+    m_buttons()
 
 {
     set_title("EmbreadedTop");
     set_default_size(240, 240);
-    scanApps();
+    
+    m_scrollable.set_border_width(10);
+    m_scrollable.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
+
+    m_appGrid.set_row_spacing(8);
+    m_appGrid.set_column_spacing(8);
+
+
+    m_scrollable.add(m_appGrid);
+
+    m_overlay.add_overlay(m_scrollable);
+
+    m_overlay.show_all();
+
+    add(m_overlay);
+    /* populateApps(); */
+    
 }
 
 int Desktop::populateApps() {
-
+    std::string exec;
+    std::string icon;
+    std::map<std::string, std::string> info;
+    for (auto const& it : std::filesystem::recursive_directory_iterator(std::filesystem::path("/usr/share/applications"))) {
+        info = DeskEntry::getEntries(it.path());
+        try {
+            exec = info.at("Exec");
+        }
+        catch (std::out_of_range) {
+            exec = "";
+        }
+        try {
+            icon = info.at("Icon");
+        }
+        catch (std::out_of_range) {
+            icon = "";
+        }
+        if (exec != "") {
+            auto vec_it = m_buttons.emplace(m_buttons.cend(), exec, icon);
+            m_appGrid.add(vec_it.base()->returnButton());
+        }
+    }
+    m_appGrid.show_all();
     return 0;
 }
 

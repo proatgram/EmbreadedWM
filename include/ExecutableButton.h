@@ -22,21 +22,19 @@ SOFTWARE.
 
 #include <cstdio>
 #include <cstdlib>
-#include <sysexits.h>
+#include <string>
+#include <gtkmm/button.h>
 
-#include "desktop_window.h"
-#include "window_manager.h"
+class ExecutableButton {
+    public:
+        ExecutableButton(std::string exec, std::string icon);
+    
+        Gtk::Button& returnButton();
 
-int main(int argc, char** argv) {
-    Glib::RefPtr<Gtk::Application> app(Gtk::Application::create("org.Embreaded.Desktop"));
-    Desktop desk;
-    desk.populateApps();
-    app->run(desk);
-    std::unique_ptr<WindowManager> winManager(WindowManager::create());
-    if (!winManager) {
-        std::fprintf(stderr, "Failed to open a connection to the X server.\n");
-        exit(EXIT_FAILURE);
-    }
-    winManager->run();
-    return 0;
-}
+    private:
+        std::string m_exec;
+        std::string m_icon;
+        Gtk::Button m_button;
+    protected:
+        void execute();
+};

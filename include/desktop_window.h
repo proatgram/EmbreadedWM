@@ -31,23 +31,32 @@ SOFTWARE.
 #include <gtkmm/container.h>
 #include <gtkmm/grid.h>
 #include <gtkmm/button.h>
-#include <gtkmm/viewport.h>
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/icontheme.h>
+#include <gtkmm/iconinfo.h>
 #include <deskentry/deskentry.h>
+
+#include "ExecutableButton.h"
 
 class Desktop : public Gtk::Window {
     public:
         Desktop();
 
+        int populateApps();
     private:
 
-        int populateApps();
 
         int scanApps();
-    protected:
         
-        int m_standardExecute(std::string executeCommand);
+    protected:
+       
+        std::vector<ExecutableButton> m_buttons;
 
-        Gtk::Viewport m_appPages;
+        void m_standardExecute(std::string executeCommand);
 
-        std::vector<Gtk::Overlay> m_backgroundPages;
+        Gtk::Grid m_appGrid;
+
+        Gtk::ScrolledWindow m_scrollable;
+
+        Gtk::Overlay m_overlay;
 };

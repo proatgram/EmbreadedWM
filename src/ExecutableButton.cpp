@@ -20,23 +20,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <cstdio>
-#include <cstdlib>
-#include <sysexits.h>
+#include "ExecutableButton.h"
 
-#include "desktop_window.h"
-#include "window_manager.h"
-
-int main(int argc, char** argv) {
-    Glib::RefPtr<Gtk::Application> app(Gtk::Application::create("org.Embreaded.Desktop"));
-    Desktop desk;
-    desk.populateApps();
-    app->run(desk);
-    std::unique_ptr<WindowManager> winManager(WindowManager::create());
-    if (!winManager) {
-        std::fprintf(stderr, "Failed to open a connection to the X server.\n");
-        exit(EXIT_FAILURE);
+ExecutableButton::ExecutableButton(std::string exec, std::string icon) :
+    m_exec(exec),
+    m_icon(icon),
+    m_button()
+{
+    std::printf("[[%s]] | [[%s]]\n", exec.c_str(), icon.c_str());
+    if(icon != "") {
+        m_button.set_image_from_icon_name(m_icon);
     }
-    winManager->run();
-    return 0;
+    m_button.signal_clicked().connect(sigc::mem_fun(*this, &ExecutableButton::execute));
+}
+
+Gtk::Button& ExecutableButton::returnButton() {
+    return m_button;
+}
+
+void ExecutableButton::execute() {
+    system(m_exec.c_str());
 }
