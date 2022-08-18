@@ -23,21 +23,23 @@ SOFTWARE.
 #include "desktop_window.h"
 
 Desktop::Desktop() :
-    m_appGrid(),
-    m_scrollable(),
-    m_overlay(),
+    m_app(Gtk::Builder::create_from_file("~/Documents/repos/EmbreadedWM/include/glade/Home.glade")),
     m_buttons()
 
 {
     set_title("EmbreadedTop");
     set_default_size(240, 240);
-    
+    m_app.get_widget("Scrollable", m_scrollable)
+
+/*    
     m_scrollable.set_border_width(10);
     m_scrollable.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
 
     m_appGrid.set_row_spacing(8);
     m_appGrid.set_column_spacing(8);
 
+
+    m_scrollable.set_size_request(4, 32);
 
     m_scrollable.add(m_appGrid);
 
@@ -46,9 +48,13 @@ Desktop::Desktop() :
     m_overlay.show_all();
 
     add(m_overlay);
-    /* populateApps(); */
-    
+  */  
 }
+
+Desktop::~Desktop() {
+    m_buttons.clear();
+}
+
 
 int Desktop::populateApps() {
     std::string exec;
@@ -70,10 +76,10 @@ int Desktop::populateApps() {
         }
         if (exec != "") {
             auto vec_it = m_buttons.emplace(m_buttons.cend(), exec, icon);
-            m_appGrid.add(vec_it.base()->returnButton());
+            /* m_appGrid.add(vec_it.base()->returnButton()); */
         }
     }
-    m_appGrid.show_all();
+    /* m_appGrid.show_all(); */
     return 0;
 }
 
@@ -86,7 +92,6 @@ int Desktop::scanApps() {
         catch (std::out_of_range) {
             exec = "";
         }
-        std::printf("%s\n", exec.c_str());
     }
     return 0;
 }

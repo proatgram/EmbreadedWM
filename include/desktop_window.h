@@ -34,6 +34,8 @@ SOFTWARE.
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/icontheme.h>
 #include <gtkmm/iconinfo.h>
+#include <gtkmm/adjustment.h>
+#include <gtkmm/builder.h>
 #include <deskentry/deskentry.h>
 
 #include "ExecutableButton.h"
@@ -42,6 +44,8 @@ class Desktop : public Gtk::Window {
     public:
         Desktop();
 
+        ~Desktop();
+
         int populateApps();
     private:
 
@@ -49,14 +53,19 @@ class Desktop : public Gtk::Window {
         int scanApps();
         
     protected:
-       
+
+        Glib::RefPtr<Gtk::Builder> m_app;
+
+        Gtk::ScrolledWindow& m_scrollable;
+
+        Gtk::Overlay& m_overlay;
+
+        Gtk::Grid& m_appGrid;
+ 
+
         std::vector<ExecutableButton> m_buttons;
 
         void m_standardExecute(std::string executeCommand);
 
-        Gtk::Grid m_appGrid;
-
-        Gtk::ScrolledWindow m_scrollable;
-
-        Gtk::Overlay m_overlay;
 };
+

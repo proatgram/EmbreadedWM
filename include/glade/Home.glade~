@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.38.2 -->
+<interface>
+  <requires lib="gtk+" version="3.24"/>
+  <object class="GtkOverlay">
+    <property name="name">Background</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <child>
+      <object class="GtkScrolledWindow">
+        <property name="name">Scrollable</property>
+        <property name="visible">True</property>
+        <property name="can-focus">True</property>
+        <property name="hscrollbar-policy">never</property>
+        <property name="vscrollbar-policy">never</property>
+        <property name="shadow-type">in</property>
+        <property name="min-content-width">8</property>
+        <property name="min-content-height">8</property>
+        <property name="max-content-width">12</property>
+        <property name="max-content-height">12</property>
+        <property name="propagate-natural-width">True</property>
+        <child>
+          <object class="GtkViewport">
+            <property name="name">Viewport</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <child>
+              <!-- n-columns=0 n-rows=0 -->
+              <object class="GtkGrid">
+                <property name="name">AppGrids</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-start">8</property>
+                <property name="margin-end">8</property>
+                <property name="margin-top">8</property>
+                <property name="margin-bottom">8</property>
+                <property name="row-homogeneous">True</property>
+                <property name="column-homogeneous">True</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="index">-1</property>
+      </packing>
+    </child>
+  </object>
+</interface>
