@@ -56,12 +56,11 @@ class Desktop : public Gtk::Window {
 
         Glib::RefPtr<Gtk::Builder> m_app;
 
-        Gtk::ScrolledWindow& m_scrollable;
+        Gtk::ScrolledWindow* m_scrollable;
 
-        Gtk::Overlay& m_overlay;
+        Gtk::Overlay* m_overlay;
 
-        Gtk::Grid& m_appGrid;
- 
+        Gtk::Grid* m_appGrid;
 
         std::vector<ExecutableButton> m_buttons;
 

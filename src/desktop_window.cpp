@@ -23,32 +23,22 @@ SOFTWARE.
 #include "desktop_window.h"
 
 Desktop::Desktop() :
-    m_app(Gtk::Builder::create_from_file("~/Documents/repos/EmbreadedWM/include/glade/Home.glade")),
+    m_app(Gtk::Builder::create_from_file("/home/thetimbrick/Projects/EmbreadedWM/include/glade/Home.glade")),
+    m_scrollable(nullptr),
+    m_overlay(nullptr),
+    m_appGrid(nullptr),
     m_buttons()
 
 {
     set_title("EmbreadedTop");
     set_default_size(240, 240);
-    m_app.get_widget("Scrollable", m_scrollable)
+    m_app->get_widget("Scrollable", m_scrollable);
+    m_app->get_widget("Background", m_overlay);
+    m_app->get_widget("AppGrid", m_appGrid);
 
-/*    
-    m_scrollable.set_border_width(10);
-    m_scrollable.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
+    m_overlay->show_all();
 
-    m_appGrid.set_row_spacing(8);
-    m_appGrid.set_column_spacing(8);
-
-
-    m_scrollable.set_size_request(4, 32);
-
-    m_scrollable.add(m_appGrid);
-
-    m_overlay.add_overlay(m_scrollable);
-
-    m_overlay.show_all();
-
-    add(m_overlay);
-  */  
+    add(*m_overlay);
 }
 
 Desktop::~Desktop() {
@@ -76,10 +66,10 @@ int Desktop::populateApps() {
         }
         if (exec != "") {
             auto vec_it = m_buttons.emplace(m_buttons.cend(), exec, icon);
-            /* m_appGrid.add(vec_it.base()->returnButton()); */
+            m_appGrid->add(vec_it.base()->returnButton());
         }
     }
-    /* m_appGrid.show_all(); */
+    m_appGrid->show_all();
     return 0;
 }
 
