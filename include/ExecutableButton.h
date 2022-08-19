@@ -30,7 +30,6 @@ class ExecutableButton {
         ExecutableButton(std::string exec, std::string icon);
     
         Gtk::Button& returnButton();
-
     private:
         std::string m_exec;
         std::string m_icon;

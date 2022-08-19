@@ -23,7 +23,7 @@ SOFTWARE.
 #include "desktop_window.h"
 
 Desktop::Desktop() :
-    m_appGrid(),
+    m_appGrid(std::make_unique<Gtk::Grid>()),
     m_scrollable(),
     m_overlay(),
     m_buttons()
@@ -35,11 +35,11 @@ Desktop::Desktop() :
     m_scrollable.set_border_width(10);
     m_scrollable.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
 
-    m_appGrid.set_row_spacing(8);
-    m_appGrid.set_column_spacing(8);
+    m_appGrid->set_row_spacing(8);
+    m_appGrid->set_column_spacing(8);
 
 
-    m_scrollable.add(m_appGrid);
+    m_scrollable.add(*m_appGrid.get());
 
     m_overlay.add_overlay(m_scrollable);
 
@@ -48,6 +48,10 @@ Desktop::Desktop() :
     add(m_overlay);
     /* populateApps(); */
     
+}
+
+Desktop::~Desktop() {
+   m_appGrid.reset();
 }
 
 int Desktop::populateApps() {
@@ -69,11 +73,12 @@ int Desktop::populateApps() {
             icon = "";
         }
         if (exec != "") {
-            auto vec_it = m_buttons.emplace(m_buttons.cend(), exec, icon);
-            m_appGrid.add(vec_it.base()->returnButton());
+	    std::shared_ptr<ExecutableButton> btn = std::make_shared<ExecutableButton>(exec, icon);
+            m_buttons.push_back(btn);
+            m_appGrid->add(btn->returnButton());
         }
     }
-    m_appGrid.show_all();
+    m_appGrid->show_all();
     return 0;
 }
 

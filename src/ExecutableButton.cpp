@@ -27,7 +27,7 @@ ExecutableButton::ExecutableButton(std::string exec, std::string icon) :
     m_icon(icon),
     m_button()
 {
-    std::printf("[[%s]] | [[%s]]\n", exec.c_str(), icon.c_str());
+    std::printf("[[%p]] | [[%s]] | [[%s]]\n", exec.c_str(), exec.c_str(), icon.c_str());
     if(icon != "") {
         m_button.set_image_from_icon_name(m_icon);
     }
@@ -39,5 +39,6 @@ Gtk::Button& ExecutableButton::returnButton() {
 }
 
 void ExecutableButton::execute() {
+    std::printf("Executing (%p)\n", m_exec.c_str());
     system(m_exec.c_str());
 }

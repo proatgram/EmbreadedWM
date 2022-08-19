@@ -24,6 +24,8 @@ SOFTWARE.
 #include <cstdlib>
 #include <string>
 #include <vector>
+#include <memory>
+
 #include <gtkmm/window.h>
 #include <gtkmm/box.h>
 #include <gtkmm/overlay.h>
@@ -41,8 +43,11 @@ SOFTWARE.
 class Desktop : public Gtk::Window {
     public:
         Desktop();
-
+	~Desktop();
         int populateApps();
+
+	Desktop(const Desktop&) = delete;
+	Desktop& operator=(const Desktop&) = delete;
     private:
 
 
@@ -50,11 +55,11 @@ class Desktop : public Gtk::Window {
         
     protected:
        
-        std::vector<ExecutableButton> m_buttons;
+        std::vector<std::shared_ptr<ExecutableButton>> m_buttons;
 
         void m_standardExecute(std::string executeCommand);
 
-        Gtk::Grid m_appGrid;
+	std::unique_ptr<Gtk::Grid> m_appGrid;
 
         Gtk::ScrolledWindow m_scrollable;
 
