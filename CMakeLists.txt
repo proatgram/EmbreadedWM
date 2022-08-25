@@ -10,7 +10,7 @@ LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-
+set(CMAKE_BUILD_TYPE "Debug")
 
 pkg_check_modules(GTKMM3 REQUIRED gtkmm-3.0)
 pkg_check_modules(GDKMM3 REQUIRED gdkmm-3.0)

@@ -25,21 +25,36 @@ SOFTWARE.
 #include <cstdio>
 #include <cstdlib>
 #include <string>
-#include <gtkmm/button.h>
-#include <gtkmm/icontheme.h>
-#include <gtkmm/image.h>
-#include <gdkmm/pixbuf.h>
-#include <gtkmm/layout.h>
+#include <memory>
 
-class ExecutableButton {
+#include <gtkmm/grid.h>
+
+#include "ExecutableButton.h"
+
+class Page {
     public:
-        ExecutableButton(std::string exec, std::string icon);
-    
-        Gtk::Button& returnButton();
+        Page(int maxHeight = 5, int maxWidth = 5);
+
+        int addApp(std::string icon, std::string exec);
+
+        int addApp(std::shared_ptr<ExecutableButton> app);
+
+        Gtk::Grid& getGrid();
+
+        enum {
+            MAX_ITEMS = std::numeric_limits<int>::min()
+        };
     private:
-        std::string m_exec;
-        std::string m_icon;
-        Gtk::Button m_button;
-    protected:
-        void execute();
+        
+        Gtk::Grid m_appGrid;
+
+        std::vector<std::shared_ptr<ExecutableButton>> m_apps;
+
+        int m_rows;
+
+        int m_columns;
+
+        int m_maxRows;
+
+        int m_maxColumns;
 };

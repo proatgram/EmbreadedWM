@@ -20,6 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#pragma once
+
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -36,9 +38,12 @@ SOFTWARE.
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/icontheme.h>
 #include <gtkmm/iconinfo.h>
+#include <gtkmm/stack.h>
+#include <gtkmm/notebook.h>
 #include <deskentry/deskentry.h>
 
 #include "ExecutableButton.h"
+#include "AppPage.h"
 
 class Desktop : public Gtk::Window {
     public:
@@ -57,12 +62,10 @@ class Desktop : public Gtk::Window {
         int scanApps();
         
     protected:
-       
-        std::vector<std::shared_ptr<ExecutableButton>> m_buttons;
+        
+        Gtk::Notebook m_stack;
 
-	std::unique_ptr<Gtk::Grid> m_appGrid;
-
-        Gtk::ScrolledWindow m_scrollable;
+        std::vector<Page> m_pages;
 
         Gtk::Overlay m_overlay;
 };

@@ -23,27 +23,13 @@ SOFTWARE.
 #include "desktop_window.h"
 
 Desktop::Desktop() :
-    m_appGrid(std::make_unique<Gtk::Grid>()),
-    m_scrollable(),
-    m_overlay(),
-    m_buttons()
+    m_overlay()
 
 {
     set_title("EmbreadedTop");
     set_default_size(240, 240);
-    
-    m_scrollable.set_border_width(10);
-    m_scrollable.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
-
-    m_appGrid->set_row_spacing(8);
-    m_appGrid->set_column_spacing(8);
-
-    m_appGrid->set_column_homogeneous(true);
-    m_appGrid->set_row_homogeneous(true);
-
-    m_scrollable.add(*m_appGrid.get());
-
-    m_overlay.add_overlay(m_scrollable);
+   
+    m_overlay.add_overlay(m_stack);
 
     m_overlay.show_all();
 
@@ -51,7 +37,7 @@ Desktop::Desktop() :
 }
 
 Desktop::~Desktop() {
-   m_appGrid.reset();
+
 }
 
 int Desktop::populateApps() {
@@ -79,7 +65,6 @@ int Desktop::populateApps() {
             if (i != std::string::npos) {
                 exec.erase(i, 2);
             }
-            std::printf("%s\n", exec.c_str());
         }
         catch (std::out_of_range) {
             exec = "";
@@ -98,23 +83,20 @@ int Desktop::populateApps() {
             hide = "";
         }
             if (hide != "true") {
-                std::shared_ptr<ExecutableButton> btn = std::make_shared<ExecutableButton>(exec, icon);
-                m_buttons.push_back(btn);
-                if (m_rows >= 5) {
-                    m_columns++;
-                    m_rows = 0;
-                    m_appGrid->insert_column(m_columns);
-                    m_appGrid->attach(btn->returnButton(), m_columns, m_rows + 1);
+                if (m_pages.size() == 0) {
+                    m_pages.emplace_back(5, 5);
                 }
-                else {
-                    m_appGrid->attach(btn->returnButton(), m_columns, m_rows + 1);
 
+                if (m_pages.at(m_pages.size() - 1).addApp(icon, exec) == m_pages.at(m_pages.size() - 1).MAX_ITEMS) {
+                    m_pages.emplace_back(5, 5);
                 }
-                m_rows++;
             }
         }
     }
-    m_appGrid->show_all();
+    for (unsigned int i = 0; i < m_pages.size(); i++) {
+        m_stack.add(m_pages.at(i).getGrid());
+    }
+    m_stack.show_all();
     return 0;
 }
 
