@@ -24,6 +24,10 @@ SOFTWARE.
 #include <cstdlib>
 #include <string>
 #include <gtkmm/button.h>
+#include <gtkmm/icontheme.h>
+#include <gtkmm/image.h>
+#include <gdkmm/pixbuf.h>
+#include <gtkmm/layout.h>
 
 class ExecutableButton {
     public:

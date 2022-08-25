@@ -38,6 +38,8 @@ Desktop::Desktop() :
     m_appGrid->set_row_spacing(8);
     m_appGrid->set_column_spacing(8);
 
+    m_appGrid->set_column_homogeneous(true);
+    m_appGrid->set_row_homogeneous(true);
 
     m_scrollable.add(*m_appGrid.get());
 
@@ -46,8 +48,6 @@ Desktop::Desktop() :
     m_overlay.show_all();
 
     add(m_overlay);
-    /* populateApps(); */
-    
 }
 
 Desktop::~Desktop() {
@@ -57,11 +57,29 @@ Desktop::~Desktop() {
 int Desktop::populateApps() {
     std::string exec;
     std::string icon;
+    std::string hide;
     std::map<std::string, std::string> info;
     for (auto const& it : std::filesystem::recursive_directory_iterator(std::filesystem::path("/usr/share/applications"))) {
         info = DeskEntry::getEntries(it.path());
         try {
             exec = info.at("Exec");
+            std::string::size_type i = exec.find("%f");
+            if (i != std::string::npos) {
+                exec.erase(i, 2);
+            }
+            i = exec.find("%F");
+            if (i != std::string::npos) {
+                exec.erase(i, 2);
+            }
+            i = exec.find("%U");
+            if (i != std::string::npos) {
+                exec.erase(i, 2);
+            }
+            i = exec.find("%u");
+            if (i != std::string::npos) {
+                exec.erase(i, 2);
+            }
+            std::printf("%s\n", exec.c_str());
         }
         catch (std::out_of_range) {
             exec = "";
@@ -73,9 +91,27 @@ int Desktop::populateApps() {
             icon = "";
         }
         if (exec != "") {
-	    std::shared_ptr<ExecutableButton> btn = std::make_shared<ExecutableButton>(exec, icon);
-            m_buttons.push_back(btn);
-            m_appGrid->add(btn->returnButton());
+        try {
+            hide = info.at("NoDisplay");
+        }
+        catch (std::out_of_range) {
+            hide = "";
+        }
+            if (hide != "true") {
+                std::shared_ptr<ExecutableButton> btn = std::make_shared<ExecutableButton>(exec, icon);
+                m_buttons.push_back(btn);
+                if (m_rows >= 5) {
+                    m_columns++;
+                    m_rows = 0;
+                    m_appGrid->insert_column(m_columns);
+                    m_appGrid->attach(btn->returnButton(), m_columns, m_rows + 1);
+                }
+                else {
+                    m_appGrid->attach(btn->returnButton(), m_columns, m_rows + 1);
+
+                }
+                m_rows++;
+            }
         }
     }
     m_appGrid->show_all();

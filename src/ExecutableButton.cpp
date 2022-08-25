@@ -27,9 +27,15 @@ ExecutableButton::ExecutableButton(std::string exec, std::string icon) :
     m_icon(icon),
     m_button()
 {
-    std::printf("[[%p]] | [[%s]] | [[%s]]\n", exec.c_str(), exec.c_str(), icon.c_str());
     if(icon != "") {
-        m_button.set_image_from_icon_name(m_icon);
+        Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::create();
+        Gtk::IconInfo info = theme->lookup_icon(icon, Gtk::ICON_SIZE_BUTTON);
+        if (info != NULL) {
+            Glib::RefPtr<Gdk::Pixbuf> buff = Gdk::Pixbuf::create_from_file(info.get_filename());
+            auto im = Gtk::manage(new Gtk::Image(buff->scale_simple(32, 32, Gdk::INTERP_NEAREST)));
+            m_button.set_image(*im);
+            m_button.show_all();
+        }
     }
     m_button.signal_clicked().connect(sigc::mem_fun(*this, &ExecutableButton::execute));
 }
@@ -39,6 +45,5 @@ Gtk::Button& ExecutableButton::returnButton() {
 }
 
 void ExecutableButton::execute() {
-    std::printf("Executing (%p)\n", m_exec.c_str());
     system(m_exec.c_str());
 }

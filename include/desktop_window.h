@@ -49,15 +49,16 @@ class Desktop : public Gtk::Window {
 	Desktop(const Desktop&) = delete;
 	Desktop& operator=(const Desktop&) = delete;
     private:
+        
+        unsigned int m_rows;
 
+        unsigned int m_columns;
 
         int scanApps();
         
     protected:
        
         std::vector<std::shared_ptr<ExecutableButton>> m_buttons;
-
-        void m_standardExecute(std::string executeCommand);
 
 	std::unique_ptr<Gtk::Grid> m_appGrid;
 
